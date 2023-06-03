@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ZyzMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加志愿者记录 -->
+	<insert id="addZyz" parameterType="zyz">
+		insert into t_zyz(name,gender,birthDate,userPhoto,telephone,address,grda,fwxm) values 
+		(#{name},#{gender},#{birthDate},#{userPhoto},#{telephone},#{address},#{grda},#{fwxm})
+	</insert>
+
+	<!-- 按照查询条件分页查询志愿者记录 -->
+	<select id="queryZyz" resultMap="zyzMap" >
+		select t_zyz.* from t_zyz ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="zyzMap" type="zyz">
+        <id property="zyzId" column="zyzId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有志愿者记录 -->
+	<select id="queryZyzList" resultMap="zyzMap" >
+		select t_zyz.* from t_zyz ${where}
+	</select>
+
+    <!-- 按照查询条件的志愿者记录数 -->
+	<select id="queryZyzCount" resultType="int">
+		select count(*) from t_zyz ${where}
+	</select>
+
+	<!-- 根据主键查询某个志愿者记录 -->
+	<select id="getZyz" parameterType="int" resultMap="zyzMap">
+		select * from t_zyz where t_zyz.zyzId = #{zyzId}
+	</select>
+
+	<!-- 更新志愿者记录 -->
+	<update id="updateZyz" parameterType="zyz">
+		update t_zyz set name=#{name},gender=#{gender},birthDate=#{birthDate},userPhoto=#{userPhoto},telephone=#{telephone},address=#{address},grda=#{grda},fwxm=#{fwxm} where zyzId = #{zyzId}
+	</update>
+
+	<!-- 删除志愿者记录 -->
+	<delete id="deleteZyz" parameterType="int">
+		delete from t_zyz where zyzId=#{zyzId}
+	</delete>
+
+</mapper>

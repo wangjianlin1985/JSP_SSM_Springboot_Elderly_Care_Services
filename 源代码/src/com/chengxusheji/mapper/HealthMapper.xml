@@ -1,0 +1,49 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.HealthMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加健康信息记录 -->
+	<insert id="addHealth" parameterType="health">
+		insert into t_health(userObj,xinlv,xueya,hxpl,tiwen,tizhong,healthDesc,testDate) values 
+		(#{userObj.user_name},#{xinlv},#{xueya},#{hxpl},#{tiwen},#{tizhong},#{healthDesc},#{testDate})
+	</insert>
+
+	<!-- 按照查询条件分页查询健康信息记录 -->
+	<select id="queryHealth" resultMap="healthMap" >
+		select t_health.* from t_health,t_userInfo ${where} and t_health.userObj = t_userInfo.user_name limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="healthMap" type="health">
+        <id property="healthId" column="healthId" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有健康信息记录 -->
+	<select id="queryHealthList" resultMap="healthMap" >
+		select t_health.* from t_health,t_userInfo ${where} and t_health.userObj = t_userInfo.user_name
+	</select>
+
+    <!-- 按照查询条件的健康信息记录数 -->
+	<select id="queryHealthCount" resultType="int">
+		select count(*) from t_health,t_userInfo ${where} and t_health.userObj = t_userInfo.user_name
+	</select>
+
+	<!-- 根据主键查询某个健康信息记录 -->
+	<select id="getHealth" parameterType="int" resultMap="healthMap">
+		select * from t_health where t_health.healthId = #{healthId}
+	</select>
+
+	<!-- 更新健康信息记录 -->
+	<update id="updateHealth" parameterType="health">
+		update t_health set userObj=#{userObj.user_name},xinlv=#{xinlv},xueya=#{xueya},hxpl=#{hxpl},tiwen=#{tiwen},tizhong=#{tizhong},healthDesc=#{healthDesc},testDate=#{testDate} where healthId = #{healthId}
+	</update>
+
+	<!-- 删除健康信息记录 -->
+	<delete id="deleteHealth" parameterType="int">
+		delete from t_health where healthId=#{healthId}
+	</delete>
+
+</mapper>

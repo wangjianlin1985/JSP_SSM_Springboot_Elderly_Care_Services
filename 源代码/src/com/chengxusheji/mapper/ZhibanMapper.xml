@@ -1,0 +1,49 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ZhibanMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加值班记录 -->
+	<insert id="addZhiban" parameterType="zhiban">
+		insert into t_zhiban(workerObj,zhibanDate,zhibanTime,zhibanMemo) values 
+		(#{workerObj.workUserName},#{zhibanDate},#{zhibanTime},#{zhibanMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询值班记录 -->
+	<select id="queryZhiban" resultMap="zhibanMap" >
+		select t_zhiban.* from t_zhiban,t_worker ${where} and t_zhiban.workerObj = t_worker.workUserName limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="zhibanMap" type="zhiban">
+        <id property="zhibanId" column="zhibanId" />
+        <association property="workerObj" column="workerObj" select="com.chengxusheji.mapper.WorkerMapper.getWorker" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有值班记录 -->
+	<select id="queryZhibanList" resultMap="zhibanMap" >
+		select t_zhiban.* from t_zhiban,t_worker ${where} and t_zhiban.workerObj = t_worker.workUserName
+	</select>
+
+    <!-- 按照查询条件的值班记录数 -->
+	<select id="queryZhibanCount" resultType="int">
+		select count(*) from t_zhiban,t_worker ${where} and t_zhiban.workerObj = t_worker.workUserName
+	</select>
+
+	<!-- 根据主键查询某个值班记录 -->
+	<select id="getZhiban" parameterType="int" resultMap="zhibanMap">
+		select * from t_zhiban where t_zhiban.zhibanId = #{zhibanId}
+	</select>
+
+	<!-- 更新值班记录 -->
+	<update id="updateZhiban" parameterType="zhiban">
+		update t_zhiban set workerObj=#{workerObj.workUserName},zhibanDate=#{zhibanDate},zhibanTime=#{zhibanTime},zhibanMemo=#{zhibanMemo} where zhibanId = #{zhibanId}
+	</update>
+
+	<!-- 删除值班记录 -->
+	<delete id="deleteZhiban" parameterType="int">
+		delete from t_zhiban where zhibanId=#{zhibanId}
+	</delete>
+
+</mapper>
